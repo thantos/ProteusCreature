@@ -1,0 +1,5 @@
+C:\Users\Sam\Documents\Visual Studio 2010\Projects\ProteusCreature\ProteusCreature\obj\Debug\ResolveAssemblyReference.cache
+C:\Users\Sam\Documents\Visual Studio 2010\Projects\ProteusCreature\ProteusCreature\bin\Debug\ProteusCreature.dll
+C:\Users\Sam\Documents\Visual Studio 2010\Projects\ProteusCreature\ProteusCreature\bin\Debug\ProteusCreature.pdb
+C:\Users\Sam\Documents\Visual Studio 2010\Projects\ProteusCreature\ProteusCreature\obj\Debug\ProteusCreature.dll
+C:\Users\Sam\Documents\Visual Studio 2010\Projects\ProteusCreature\ProteusCreature\obj\Debug\ProteusCreature.pdb
