@@ -44,5 +44,18 @@ namespace ProteusCreature
                 return -1;
             }
         }
+
+        public static bool operator >=(Stats s1, Stats s2)
+        {
+            foreach (statsType ty in Enum.GetValues(typeof(statsType)))
+                if (s1.stats.Find((x) => (x.Type == ty)) < s2.stats.Find((x) => (x.Type == ty)))
+                    return false;
+            return true;
+        }
+
+        public static bool operator <(Stats m1, Stats m2)
+        {
+            return !(m1 >= m2);
+        }
     }
 }

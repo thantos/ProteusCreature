@@ -9,7 +9,7 @@ namespace ProteusCreature
     {
         public enum ClassTypes
         {
-            InsectHead, InsectBody, InsectLegs, InsectAccessory,
+            InvertebrateHead, InsectBody, InsectLegs, InsectAccessory,
             MammalHead, MammalBody, MammelLegs, MammelAccessory,
             ReptileHead, ReptileBody, ReptileLegs, ReptileAccessory
         }

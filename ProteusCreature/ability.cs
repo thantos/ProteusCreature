@@ -7,14 +7,14 @@ namespace ProteusCreature
 {
     public class ability
     {
-        public ability(string name, List<effect> effects, bool onSelf, bool passive, mastery req, stat stat_req)
+        public ability(string name, List<effect> effects, bool onSelf, bool passive, mastery req, Stats stats_req)
         {
             Name = name;
             Effects = effects;
             OnSelf = onSelf;
             Passive = passive;
-            Requirments = req;
-            StatMastery = stat_req;
+            MasteryRequirments = req;
+            StatsRequirments = stats_req;
         }
 
         public string Name { get; set; }
@@ -22,8 +22,8 @@ namespace ProteusCreature
         public bool OnSelf { get; set; }
         public bool Passive { get; private set; }
 
-        public mastery Requirments { get; set; }
-        public stat StatMastery { get; set; }
+        public mastery MasteryRequirments { get; set; }
+        public Stats StatsRequirments { get; set; }
 
         public void AddMainPassiveAbility(stat str, stat defe, stat agil, stat end, stat intel)
         {

@@ -20,5 +20,17 @@ namespace ProteusCreature
             MasteryLevels[type] += Amount;
         }
     
+        public static bool operator >=(mastery m1, mastery m2)
+        {
+            foreach (bodypart.ClassTypes ty in Enum.GetValues(typeof(bodypart.ClassTypes)))
+                if (m1.MasteryLevels[ty] < m2.MasteryLevels[ty])
+                    return false;
+            return true;
+        }
+
+        public static bool operator <(mastery m1, mastery m2)
+        {
+            return !(m1>=m2);
+        }
     }
 }

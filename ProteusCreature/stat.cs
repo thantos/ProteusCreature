@@ -14,5 +14,10 @@ namespace ProteusCreature
         }
         public double Amount { get; set; }
         public Stats.statsType Type { get; set; }
+
+        public static bool operator <(stat s1, stat s2)
+        {
+            return s1.Amount < s2.Amount;
+        }
     }
 }
