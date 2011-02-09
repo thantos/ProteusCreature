@@ -16,8 +16,8 @@ namespace ProteusCreature
         /// <param name="perturn">Flag if the mod is added per turn or once</param>
         /// <param name="reset">Does the stat reset after the effect is over</param>
         /// <param name="name">Optional name of the parent</param>
-        public effect(Stats.statsType type, double mod, int timeout, bool perturn, bool reset, String name = " "):
-            this( new stat(mod, type), timeout, perturn, reset, name){}
+        public effect(Stats.statsType type, double mod, int timeout, bool perturn, bool reset, String name = " ", double modmod = 1):
+            this( new stat(mod, type), timeout, perturn, reset, name,modmod){}
 
         /// <summary>
         /// This constructor takes a statsType and mod(double) and makes it into a stat
@@ -27,9 +27,11 @@ namespace ProteusCreature
         /// <param name="perturn">Flag if the mod is added per turn or once</param>
         /// <param name="reset">Does the stat reset after the effect is over</param>
         /// <param name="name">Optional name of the parent</param>
-        public effect(stat st, int timeout, bool perturn, bool reset, String name = " ")
+        public effect(stat st, int timeout, bool perturn, bool reset, String name = " ", double modmod = 1)
         {
+            ModModifier = modmod;
             Timeout = timeout;
+            PerminentTimeout = timeout;
             effectedStat = st;
             Perturn = perturn;
             ParentName = name;
@@ -39,7 +41,12 @@ namespace ProteusCreature
 
 
         private stat effectedStat{get;set;}
-        
+
+        /// <summary>
+        /// Used to change the modfier such as a str or agility mod to be higher when associated to a body part
+        /// </summary>
+        public double ModModifier { get; set; }//This will be a modifier for things like creature mastery, default 1
+
         /// <summary>
         /// The type of the stat
         /// </summary>
@@ -58,7 +65,7 @@ namespace ProteusCreature
         {
             get
             {
-                return effectedStat.Amount;
+                return effectedStat.Amount * this.ModModifier;
             }
         }
 
@@ -67,6 +74,11 @@ namespace ProteusCreature
         /// -1 == permintent, 1 == once, 0 == done
         /// </summary>
         public int Timeout { get; set; }
+        
+        /// <summary>
+        /// Stores the effect's timeout so the Timeout is reset to this after it ends
+        /// </summary>
+        private int PerminentTimeout;
 
         /// <summary>
         /// true == +/- each clock cycle
@@ -98,7 +110,10 @@ namespace ProteusCreature
             if (Timeout > 0)
                 Timeout--;
             if (Timeout == 0)
+            {
+                this.Timeout = this.PerminentTimeout;
                 return false;
+            }
             if (Perturn)
             {
                 c.addEffectMod(this);

@@ -19,5 +19,20 @@ namespace ProteusCreature
         {
             return s1.Amount < s2.Amount;
         }
+
+        public static bool operator >(stat s1, stat s2)
+        {
+            return s1.Amount > s2.Amount;
+        }
+
+        public static bool operator <=(stat s1, stat s2)
+        {
+            return s1.Amount <= s2.Amount;
+        }
+
+        public static bool operator >=(stat s1, stat s2)
+        {
+            return s1.Amount >= s2.Amount;
+        }
     }
 }

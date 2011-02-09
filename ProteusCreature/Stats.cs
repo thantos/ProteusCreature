@@ -45,6 +45,8 @@ namespace ProteusCreature
             }
         }
 
+        #region operator overloads
+
         public static bool operator >=(Stats s1, Stats s2)
         {
             foreach (statsType ty in Enum.GetValues(typeof(statsType)))
@@ -57,5 +59,30 @@ namespace ProteusCreature
         {
             return !(m1 >= m2);
         }
+
+        public static bool operator <=(Stats s1, Stats s2)
+        {
+            return !(s1 > s2);
+        }
+
+        public static bool operator >(Stats s1, Stats s2)
+        {
+            return (s1 >= s2) && !(s1 == s2);
+        }
+
+        public static bool operator ==(Stats s1, Stats s2)
+        {
+            foreach (statsType ty in Enum.GetValues(typeof(statsType)))
+                if (s1.stats.Find((x) => (x.Type == ty)) != s2.stats.Find((x) => (x.Type == ty)))
+                    return false;
+            return true;
+        }
+
+        public static bool operator !=(Stats s1, Stats s2)
+        {
+            return !(s1 == s2);
+        }
+
+        #endregion
     }
 }

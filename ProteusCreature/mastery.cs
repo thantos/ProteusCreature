@@ -7,6 +7,8 @@ namespace ProteusCreature
 {
     public class mastery
     {
+        /** TODO: Add method to return the modifier for the current mastery level **/
+
         public mastery()
         {
             foreach (bodypart.ClassTypes s in Enum.GetValues(typeof(bodypart.ClassTypes)))

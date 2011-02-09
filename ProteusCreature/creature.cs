@@ -32,16 +32,15 @@ namespace ProteusCreature
             myStats.resetStats();
         }
 
-        #region effects
-
         /**Effects
          * 
          * List of effects.
          * Step will decrease the time of each effect, if it is perminent it does not get reduced
          * When an effect hits 0, it is removed.
-         * TODO: add grab effects function - update the  function
-         *       add calcuate stats -- loop through each stat and add it to the statList
+         * TODO: 
          **/
+
+        #region effects
 
         List<effect> effects;
         
@@ -104,6 +103,10 @@ namespace ProteusCreature
 
         #endregion
 
+        /**
+         * TODO: Make sure they all work when we do tests I guess
+         */
+
         #region Abilities
 
         public List<ability> Abilities { get; set; }
@@ -144,11 +147,32 @@ namespace ProteusCreature
 
         #endregion
 
+        /**
+         * TODO: Need a add body part method
+         *          Will add a body part and remove the old part
+         *          Then it will call the update abilities method
+         *          This method will most likely do more when we have UI support for the bosy parts
+         *          It will need to check for modfiers too
+         *       Need a remove body part method
+         *          Update abilities
+         *          Possibly set body part to the generic, maybe
+         *          
+         **/
+
         #region bodyParts
 
         List<bodypart> BodyParts { get; set; }
 
         #endregion
+
+        /**
+         * TODO: Add fuctions to deal with mastery
+         *          Add experiece
+         *          Calculate level
+         *          Reset Mastery
+         *      Decide on system for experience
+         *          Maybe a simple algorithm     
+         **/ 
 
         #region mastery
 
@@ -156,6 +180,14 @@ namespace ProteusCreature
 
         #endregion
 
+        /**
+         * TODO: Add the methods that deal damage
+         *          Or is damage just a effect....
+         *          We could have it be added as an effect by the damage method (healing is just negative damage)
+         *          (Damage is just an effect that effects health)
+         *       We need a use ability on method
+         *       We need a ability used on method
+         **/       
 
         #region Combat
 

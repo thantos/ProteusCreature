@@ -9,9 +9,9 @@ namespace ProteusCreature
     {
         public enum ClassTypes
         {
-            InvertebrateHead, InsectBody, InsectLegs, InsectAccessory,
-            MammalHead, MammalBody, MammelLegs, MammelAccessory,
-            ReptileHead, ReptileBody, ReptileLegs, ReptileAccessory
+            InvertebrateHead, InvertebrateBody, InvertebrateLegs, InvertebrateAccessory,
+            WarmBloodedHead, WarmBloodedBody, WarmBloodedLegs, WarmBloodedAccessory,
+            ColdBloodedHead, ColdBloodedBody, ColdBloodedLegs, ColdBloodedAccessory, NULL
         }
 
         bodypart(ClassTypes ty, double str, double defense, double intel, double endur, double agil)
