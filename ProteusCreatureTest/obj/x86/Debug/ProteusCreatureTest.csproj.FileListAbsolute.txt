@@ -1,0 +1,7 @@
+C:\Users\Sam\Documents\Visual Studio 2010\Projects\ProteusCreature\ProteusCreatureTest\bin\Debug\ProteusCreatureTest.exe
+C:\Users\Sam\Documents\Visual Studio 2010\Projects\ProteusCreature\ProteusCreatureTest\bin\Debug\ProteusCreatureTest.pdb
+C:\Users\Sam\Documents\Visual Studio 2010\Projects\ProteusCreature\ProteusCreatureTest\bin\Debug\ProteusCreature.dll
+C:\Users\Sam\Documents\Visual Studio 2010\Projects\ProteusCreature\ProteusCreatureTest\bin\Debug\ProteusCreature.pdb
+C:\Users\Sam\Documents\Visual Studio 2010\Projects\ProteusCreature\ProteusCreatureTest\obj\x86\Debug\ResolveAssemblyReference.cache
+C:\Users\Sam\Documents\Visual Studio 2010\Projects\ProteusCreature\ProteusCreatureTest\obj\x86\Debug\ProteusCreatureTest.exe
+C:\Users\Sam\Documents\Visual Studio 2010\Projects\ProteusCreature\ProteusCreatureTest\obj\x86\Debug\ProteusCreatureTest.pdb

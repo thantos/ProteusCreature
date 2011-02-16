@@ -16,8 +16,8 @@ namespace ProteusCreature
         /// <param name="perturn">Flag if the mod is added per turn or once</param>
         /// <param name="reset">Does the stat reset after the effect is over</param>
         /// <param name="name">Optional name of the parent</param>
-        public effect(Stats.statsType type, double mod, int timeout, bool perturn, bool reset, String name = " ", double modmod = 1):
-            this( new stat(mod, type), timeout, perturn, reset, name,modmod){}
+        public effect(Stats.statsType type, double mod, int timeout, bool perturn, bool reset, String name = " ", bodypart.ClassPartTypes effectpart = bodypart.ClassPartTypes.NULL):
+            this( new stat(mod, type), timeout, perturn, reset, name){}
 
         /// <summary>
         /// This constructor takes a statsType and mod(double) and makes it into a stat
@@ -27,26 +27,31 @@ namespace ProteusCreature
         /// <param name="perturn">Flag if the mod is added per turn or once</param>
         /// <param name="reset">Does the stat reset after the effect is over</param>
         /// <param name="name">Optional name of the parent</param>
-        public effect(stat st, int timeout, bool perturn, bool reset, String name = " ", double modmod = 1)
+        public effect(stat st, int timeout, bool perturn, bool reset, String name = " ", bodypart.ClassPartTypes effectedpart = bodypart.ClassPartTypes.NULL)
         {
-            ModModifier = modmod;
             Timeout = timeout;
             PerminentTimeout = timeout;
             effectedStat = st;
             Perturn = perturn;
             ParentName = name;
             ResetStat = reset;
-            TotalMod = effectedStat.Amount;
+            TotalMod = 0;
+            EffectPart = effectedpart;
         }
 
+        public effect(effect e)
+        {
+            this.PerminentTimeout = e.PerminentTimeout;
+            this.Timeout = e.Timeout;
+            this.effectedStat = e.effectedStat;
+            this.Perturn = e.Perturn;
+            this.ParentName = e.ParentName;
+            this.ResetStat = e.ResetStat;
+            this.TotalMod = e.TotalMod;
+        }
 
         private stat effectedStat{get;set;}
-
-        /// <summary>
-        /// Used to change the modfier such as a str or agility mod to be higher when associated to a body part
-        /// </summary>
-        public double ModModifier { get; set; }//This will be a modifier for things like creature mastery, default 1
-
+        public bodypart.ClassPartTypes EffectPart { get; set; }
         /// <summary>
         /// The type of the stat
         /// </summary>
@@ -65,7 +70,7 @@ namespace ProteusCreature
         {
             get
             {
-                return effectedStat.Amount * this.ModModifier;
+                return effectedStat.Amount;
             }
         }
 
@@ -120,5 +125,14 @@ namespace ProteusCreature
             }
             return true;
         }
+
+        #region tests
+
+        public override string ToString()
+        {
+            return this.EffectedType.ToString() + " - " + this.EffectMod.ToString() + " - " + this.EffectPart.ToString() + " - " + this.Timeout.ToString() + " - " + this.TotalMod.ToString();
+        }
+
+        #endregion
     }
 }

@@ -10,19 +10,51 @@ namespace ProteusCreature
         ///note: Call achievements overachievments
         //An enum for all the possible editable stats.
 
-        //the stats of one creature
-        public Stats myStats { get; set; }
+        public string Name;
+
         /// <summary>
         /// Constructor
         /// </summary>
-        public creature()
+        public creature(bodypart h, bodypart b, bodypart l, bodypart a1, string name = " ") 
         {
             myStats = new Stats();
             Mastery = new mastery();
             effects = new List<effect>();
             Abilities = new List<ability>();
+            AllAbilities = new Dictionary<ability, bool>();
 
+            //TODO Update the generic body parts as it is changed!!!
+            BodyParts = new Dictionary<slots, bodypart>();
+            AddBodyPart(h,slots.Head);
+            AddBodyPart(b,slots.Body);
+            AddBodyPart(l,slots.Legs);
+            AddBodyPart(a1, slots.Accessory1);
+            Accessory2Locked = true;
+            Name = name;
         }
+
+        public creature(string name = " "):
+            this(new bodypart(bodypart.ClassTypes.Invertebrate,bodypart.PartTypes.Head,"Starting head"),
+            new bodypart(bodypart.ClassTypes.Invertebrate,bodypart.PartTypes.Body,"Starting head"),
+            new bodypart(bodypart.ClassTypes.Invertebrate,bodypart.PartTypes.Legs,"Starting head"),
+            new bodypart(bodypart.ClassTypes.Invertebrate,bodypart.PartTypes.Accessory,"Starting head"),name)
+        {}
+
+        public creature(bodypart h, bodypart b, bodypart l, bodypart a1, bodypart a2, string name= " ")
+            : this(h, b, l, a1, name)
+        {
+            this.Accessory2Locked = false;
+            AddBodyPart(a2, slots.Accessory2);
+        }
+
+        /**
+         * TODO: Not sure....
+         **/
+
+        #region stats
+
+        //the stats of one creature
+        public Stats myStats { get; set; }
 
         /// <summary>
         /// Set all stats to 0
@@ -31,6 +63,29 @@ namespace ProteusCreature
         {
             myStats.resetStats();
         }
+
+        /// <summary>
+        /// Reapplies all Effects to Stats
+        /// </summary>
+        public void SetAllEffect()
+        {
+            resetStats();
+            foreach (effect e in this.effects)
+                myStats[e.EffectedType] += e.TotalMod;
+        }
+
+        public void SetHealthToFull()
+        {
+            myStats[Stats.statsType.CURRENT_HEALTH] = myStats[Stats.statsType.TOTAL_HEALTH];
+        }
+
+        private void CalculateTotalHealth()
+        {
+            myStats[Stats.statsType.TOTAL_HEALTH] = (myStats[Stats.statsType.STRENGTH] * .10 + myStats[Stats.statsType.ENDURANCE] * .75) * 100;
+            SetHealthToFull();
+        }
+
+        #endregion
 
         /**Effects
          * 
@@ -60,7 +115,7 @@ namespace ProteusCreature
         /// <param name="e"></param>
         private void RemoveEffect(effect e)
         {
-            e.Timeout = 0;
+            removeEffectMod(e);
         }
 
         /// <summary>
@@ -70,8 +125,9 @@ namespace ProteusCreature
         /// <param name="e">The effect to be added</param>
         public void addEffectMod(effect e)
         {
+            double total = e.EffectMod * ((e.EffectPart != bodypart.ClassPartTypes.NULL && e.Timeout == -1) ? this.Mastery.MasterMod(this.Mastery.MasteryLevels[e.EffectPart]) : 1);
             myStats[e.EffectedType] += e.EffectMod;
-            e.TotalMod += e.EffectMod; //for perturn effects, increase the effect each time.
+            e.TotalMod += e.EffectMod; //for perturn effects, increase the effect each time. 
         }
 
         /// <summary>
@@ -81,6 +137,7 @@ namespace ProteusCreature
         private void removeEffectMod(effect e)
         {
             myStats[e.EffectedType] -= e.TotalMod;
+            e.TotalMod = 0;
         }
 
         /// <summary>
@@ -110,23 +167,39 @@ namespace ProteusCreature
         #region Abilities
 
         public List<ability> Abilities { get; set; }
+        private Dictionary<ability, bool> AllAbilities { get; set; }
 
-        private void updateAbilities()
+        private void UpdateAbilities()
         {
-            List<ability> TempList = new List<ability>();
-
-            foreach(bodypart b in BodyParts) //create a list of all availiable abilities
+            AllAbilities.Clear();
+            Abilities.Clear();
+            foreach (effect e in this.effects)
+                this.RemoveEffect(e);
+            effects.Clear();
+            foreach (bodypart b in BodyParts.Values)
                 foreach (ability a in b.Abilities)
-                    if (this.myStats >= a.StatsRequirments && this.Mastery >= a.MasteryRequirments) 
-                        TempList.Add(a); // add if the creaure's stats and mastery allow it
+                    AllAbilities.Add(a,false);
+            AllAbilities.OrderByDescending(x => x.Key.StatsRequirments.LowestBaseStat());
+            while (!MarkAndAddAbilities())
+                ;
+            CalculateTotalHealth();
+        }
 
-            foreach ( ability a in this.Abilities) //if TempList doesn't have a stat that is active on the creature
-                if(!TempList.Contains(a))
-                    this.RemoveAbility(a); // remove it
-
-            foreach (ability a in TempList) // if templist has an ability that the creature doesn't have
-                if (!this.Abilities.Contains(a))
-                    this.AddAbility(a); //add it
+        private bool MarkAndAddAbilities()
+        {
+            bool done = true;
+            foreach(KeyValuePair<ability,bool> pair in AllAbilities)
+            {
+                if((!pair.Value) && ( this.myStats >= pair.Key.StatsRequirments) && (pair.Key.MasteryRequirments <= this.Mastery))
+                {
+                    done = false;
+                    this.AddAbility(pair.Key);
+                }
+            }
+            if(!done)
+                foreach (ability a in Abilities)
+                    AllAbilities[a] = true;
+            return done;
         }
 
         private void RemoveAbility(ability a)
@@ -161,7 +234,34 @@ namespace ProteusCreature
 
         #region bodyParts
 
-        List<bodypart> BodyParts { get; set; }
+        public enum slots
+        {
+            Head,Body,Legs,Accessory1,Accessory2
+        }
+
+        bool Accessory2Locked;
+
+        Dictionary<slots, bodypart> BodyParts { get; set; }
+
+        public String AddBodyPart(bodypart b, slots slot)
+        {
+            if (slot == slots.Accessory2 && Accessory2Locked)//Accessory slot 2 is intitially locked
+                return "Accessory 2 slot is Locked.";
+
+            this.RemoveBodyPart(slot); //Removes the body part and all residule effects
+            this.BodyParts[slot] = b; //put the part in it's new place
+
+            this.UpdateAbilities();
+
+            return b.Name + "has been added.";
+        }
+
+        public void RemoveBodyPart(slots s)
+        {
+
+
+        }
+
 
         #endregion
 
@@ -187,6 +287,11 @@ namespace ProteusCreature
          *          (Damage is just an effect that effects health)
          *       We need a use ability on method
          *       We need a ability used on method
+         *          Need to check to see if the ability is to be used on self or not
+         *              If it is to be used on self call use ability method on this
+         *              Maybe... an ability on the screen would be denoted as self or other
+         *                  So... using a ability on others would need to trugger a selection of an enemy to use it on
+         *                      Combat will have a list of enemies.
          **/       
 
         #region Combat
@@ -195,6 +300,60 @@ namespace ProteusCreature
         {
             foreach (effect e in a.Effects)
                 this.AddEffect(e);
+        }
+
+        public void TakeDamage(double damage)
+        {
+            /**
+             * TODO: Calculate Damage based on defence and defence type things
+             **/
+            double ActualDamage = 0;
+
+            /** **/
+
+
+            this.AddEffect(new effect(Stats.statsType.CURRENT_HEALTH, ActualDamage, 1, false, false));
+
+            /**TODO check for death!**/
+        }
+
+        public void GiveDamage(creature Target, double Damage)
+        {
+            /** TODO: Calculate Actual damage based on damaged based by effect **/
+            double ActualDamage = 0;
+
+
+            Target.TakeDamage(ActualDamage);
+        }
+
+        #endregion
+
+        #region tests
+
+        public void PrintStats()
+        {
+            Console.WriteLine("Stats");
+            Console.WriteLine(this.myStats.ToString());
+        }
+
+        public void PrintBodyParts()
+        {
+            Console.WriteLine("bodyParts");
+            foreach (KeyValuePair<slots,bodypart> b in this.BodyParts)
+                Console.WriteLine(b.Key.ToString()+": "+b.Value.ToString());
+        }
+
+        public void PrintEffects()
+        {
+            foreach (effect e in effects)
+                Console.WriteLine(e.ToString());
+        }
+
+        public void PrintAbilities()
+        {
+            Console.WriteLine("Abilities");
+            foreach (ability a in Abilities)
+                Console.WriteLine(a.ToString());
         }
 
         #endregion
