@@ -58,6 +58,9 @@ namespace ProteusCreature
 
         public void AddAbility(ability ab)
         {
+            if(ab.Passive)
+                foreach (effect e in ab.Effects)
+                    e.EffectPart = this.ClassPart;
             Abilities.Add(ab);
         }
 

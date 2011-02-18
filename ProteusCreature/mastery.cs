@@ -7,11 +7,17 @@ namespace ProteusCreature
 {
     public class mastery
     {
+        public static double MasteryPerLevelFactor = .01; 
+
         /** 
          * TODO: Add method to return the modifier for the current mastery level
          *          We need to figure out how this will work!!!!!!!!!
          **/
         
+        /**
+         * MaxLevel = 100
+         **/ 
+
         public mastery()
         {
             MasteryLevels = new Dictionary<bodypart.ClassPartTypes, double>();
@@ -53,10 +59,9 @@ namespace ProteusCreature
             SetMastery(bodypart.PartTypes.Accessory, Class, accessory);
         }
 
-        public double MasterMod(double ma)
+        public static double MasterMod(double ma)
         {
-            //TODO: Determin mods for each mastery level!
-            return 1;
+            return (ma*MasteryPerLevelFactor) + 1;
         }
 
 

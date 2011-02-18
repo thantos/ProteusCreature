@@ -10,7 +10,7 @@ namespace ProteusCreature
         public enum statsType
         {
             STRENGTH, AGILITY, ENDURANCE, DEFENCE, INTELLIGENCE,
-            CURRENT_HEALTH, TOTAL_HEALTH, DAMAGE, RESISTANCE,
+            CURRENT_HEALTH, TOTAL_HEALTH, ADD_TOTAL_HEALTH, DAMAGE, RESISTANCE,
             CLOCK, ATTACK_RANGE, MOVE_DISTANCE, DROP_CHANCE
         };
 

@@ -10,6 +10,19 @@ namespace ProteusCreature
         ///note: Call achievements overachievments
         //An enum for all the possible editable stats.
 
+        /**
+         * Editable numbers.
+         * These are basic multipliers and such that control things like totoal health and damage done.
+         **/
+
+        /** Total_Health  = ((strength * total_health_strength_multiplier + endurance * total_health_endurance_multiplier) * total_health_final_multiplier) + addTotalHealth **/
+        
+        static double total_health_endurance_multiplier = .88; //the amount of a creature's total endurance that goes into the total health
+        static double total_health_strength_multiplier = .22; //the amount of a creature's total strength that goes into the total health
+        static double total_health_final_multiplier = 10; // the final multiplier after strength and endurance are factored in
+
+
+       
         public string Name;
 
         /// <summary>
@@ -81,8 +94,16 @@ namespace ProteusCreature
 
         private void CalculateTotalHealth()
         {
-            myStats[Stats.statsType.TOTAL_HEALTH] = (myStats[Stats.statsType.STRENGTH] * .10 + myStats[Stats.statsType.ENDURANCE] * .75) * 100;
+            myStats[Stats.statsType.TOTAL_HEALTH] = 
+                CalculateTotalHealth(myStats[Stats.statsType.STRENGTH],myStats[Stats.statsType.ENDURANCE],myStats[Stats.statsType.ADD_TOTAL_HEALTH]);
             SetHealthToFull();
+        }
+
+        public static double CalculateTotalHealth(double str, double end, double add)
+        {
+            return ((str * total_health_strength_multiplier
+                + end * total_health_endurance_multiplier) *
+                total_health_final_multiplier) + add;
         }
 
         #endregion
@@ -125,9 +146,9 @@ namespace ProteusCreature
         /// <param name="e">The effect to be added</param>
         public void addEffectMod(effect e)
         {
-            double total = e.EffectMod * ((e.EffectPart != bodypart.ClassPartTypes.NULL && e.Timeout == -1) ? this.Mastery.MasterMod(this.Mastery.MasteryLevels[e.EffectPart]) : 1);
-            myStats[e.EffectedType] += e.EffectMod;
-            e.TotalMod += e.EffectMod; //for perturn effects, increase the effect each time. 
+            double total = e.EffectMod * ((e.EffectPart != bodypart.ClassPartTypes.NULL && e.Timeout == -1) ? mastery.MasterMod(this.Mastery.MasteryLevels[e.EffectPart]) : 1);
+            myStats[e.EffectedType] += total;
+            e.TotalMod += total; //for perturn effects, increase the effect each time. 
         }
 
         /// <summary>
