@@ -63,6 +63,12 @@ namespace ProteusCreature
             } 
         }
 
+        public void damageToHealth()
+        {
+            if (this.effectedStat.Type == Stats.statsType.DAMAGE)
+                this.effectedStat.Type = Stats.statsType.CURRENT_HEALTH;
+        }
+
         /// <summary>
         /// the amount to change the effected stat
         /// </summary>
@@ -71,6 +77,10 @@ namespace ProteusCreature
             get
             {
                 return effectedStat.Amount;
+            }
+            set
+            {
+                effectedStat.Amount = value;
             }
         }
 

@@ -7,7 +7,11 @@ namespace ProteusCreature
 {
     public class mastery
     {
-        public static double MasteryPerLevelFactor = .01; 
+
+        /**
+         ****** in Constants *****
+        double MasteryPerLevelFactor //Amount each mastery level add to the multiplier 
+        **/
 
         /** 
          * TODO: Add method to return the modifier for the current mastery level
@@ -16,7 +20,8 @@ namespace ProteusCreature
         
         /**
          * MaxLevel = 100
-         **/ 
+         **/
+        public static double MaxOverallStatFromMastery { get { return 4 * (Constants.Default.MaxTotalStatPerBodyPart * ((Constants.Default.MasteryPerLevelFactor * Constants.Default.MaxMasteryLevel) + 1)); } }
 
         public mastery()
         {
@@ -59,9 +64,9 @@ namespace ProteusCreature
             SetMastery(bodypart.PartTypes.Accessory, Class, accessory);
         }
 
-        public static double MasterMod(double ma)
+        public static double MasterMod(double ma, double unused1 = 0, double unused2 = 0)
         {
-            return (ma*MasteryPerLevelFactor) + 1;
+            return (ma*Constants.Default.MasteryPerLevelFactor) + 1;
         }
 
 

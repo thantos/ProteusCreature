@@ -16,12 +16,12 @@ namespace ProteusCreature
          **/
 
         /** Total_Health  = ((strength * total_health_strength_multiplier + endurance * total_health_endurance_multiplier) * total_health_final_multiplier) + addTotalHealth **/
-        
-        static double total_health_endurance_multiplier = .88; //the amount of a creature's total endurance that goes into the total health
-        static double total_health_strength_multiplier = .22; //the amount of a creature's total strength that goes into the total health
-        static double total_health_final_multiplier = 10; // the final multiplier after strength and endurance are factored in
-
-
+        /**
+         **** in Constants ****
+        total_health_endurance_multiplier //the amount of a creature's total endurance that goes into the total health
+        total_health_strength_multiplier  //the amount of a creature's total strength that goes into the total health
+        total_health_final_multiplier  // the final multiplier after strength and endurance are factored in
+        **/
        
         public string Name;
 
@@ -101,9 +101,9 @@ namespace ProteusCreature
 
         public static double CalculateTotalHealth(double str, double end, double add)
         {
-            return ((str * total_health_strength_multiplier
-                + end * total_health_endurance_multiplier) *
-                total_health_final_multiplier) + add;
+            return ((str * Constants.Default.total_health_strength_multiplier
+                + end * Constants.Default.total_health_endurance_multiplier) *
+                Constants.Default.total_health_final_multiplier) + add;
         }
 
         #endregion
@@ -168,15 +168,18 @@ namespace ProteusCreature
         /// </summary>
         public void effectStep()
         {
+            List<effect> remove = new List<effect>();
             foreach (effect e in effects)
             {
                 if (!e.Step(this))
                 {
-                    if(e.ResetStat) // set stat back to where it was before effect (don't for things like healing)
+                    if (e.ResetStat) // set stat back to where it was before effect (don't for things like healing)
                         removeEffectMod(e);
-                    effects.Remove(e);
+                    remove.Add(e);
                 }
             }
+            foreach (effect e in remove)
+                effects.Remove(e);
         }
 
         #endregion
@@ -317,34 +320,99 @@ namespace ProteusCreature
 
         #region Combat
 
-        public void useAbilityOn(ability a)
+        public void useAbilityOn(creature target, string abilityName)
         {
-            foreach (effect e in a.Effects)
-                this.AddEffect(e);
+            useAbilityOn(target, this.Abilities.Find(x=>x.Name ==abilityName));
+
         }
 
-        public void TakeDamage(double damage)
+        public void useAbilityOn(creature target, ability a)
         {
-            /**
-             * TODO: Calculate Damage based on defence and defence type things
-             **/
-            double ActualDamage = 0;
+            foreach (effect e in a.Effects)
+            {
+                if (e.EffectedType == Stats.statsType.DAMAGE)
+                    this.GiveDamage(target, e);
+                else
+                    target.AddEffect(e);
+            }
+        }
 
-            /** **/
+        public string TakeDamage(effect e)
+        {
+            string ret;
+            e.damageToHealth();
+            e.EffectMod = -(e.EffectMod - CalculateDamageResistance(myStats[Stats.statsType.DEFENCE],myStats[Stats.statsType.INTELLIGENCE], myStats[Stats.statsType.RESISTANCE]));
 
+            //Damage less than 0 after resistance
+            if (e.EffectMod >= 0)
+            {
+                e.EffectMod = 0;
+                ret = "Blocked";
+            }
+            else
+                ret = e.EffectMod.ToString();
 
-            this.AddEffect(new effect(Stats.statsType.CURRENT_HEALTH, ActualDamage, 1, false, false));
-
+            this.AddEffect(e);
+            return ret;
             /**TODO check for death!**/
         }
 
-        public void GiveDamage(creature Target, double Damage)
+        static Random rand;
+
+        public void GiveDamage(creature Target, effect e)
         {
             /** TODO: Calculate Actual damage based on damaged based by effect **/
-            double ActualDamage = 0;
+            effect tempE = new effect(e);
+            tempE.EffectMod = 
+                CalculateDamage2(myStats[Stats.statsType.STRENGTH], myStats[Stats.statsType.INTELLIGENCE], tempE.EffectMod);
+            Target.TakeDamage(tempE);
+        }
 
 
-            Target.TakeDamage(ActualDamage);
+        #region Calculators
+
+        //option1
+        public static double CalculateDamage(double str, double unused, double Damage)
+        {
+            if(rand==null)
+            rand = new Random(DateTime.Now.Millisecond * DateTime.Now.Second);
+            return (rand.Next((int)Damage, (int)Damage +
+                    (int)(Damage * (str / mastery.MaxOverallStatFromMastery))));
+        }
+
+        //option2
+        //Hypotetically I like this one better
+        //yup I like it better
+        //its like a window, (intel / 400)*.25 * damage + damage is the lower ound
+        //(str / 400)*1 * damage + damage is the upper bound
+        public static double CalculateDamage2(double str, double intel, double Damage)
+        {
+            if (rand == null || rand.Next(1000) > 900)
+                rand = new Random((DateTime.Now.Millisecond / DateTime.Now.Second)*DateTime.Now.DayOfYear);
+            double Lower = Damage + (Damage * ((intel / mastery.MaxOverallStatFromMastery) * Constants.Default.Damage2IntelWindowEdgeMultiplier));
+            double upper = Damage + (Damage * ((str / mastery.MaxOverallStatFromMastery) * Constants.Default.Damage2StrWindowEdgeMulitiplier));
+            if (Lower > upper)
+                Lower = upper;
+            return rand.Next((int)Lower, (int)upper);
+        }
+
+        public static double CalculateDamageResistance(double def, double intel, double resist)
+        {
+            if (rand == null || rand.Next(1000) > 900)
+                rand = new Random((DateTime.Now.Millisecond / DateTime.Now.Second) * DateTime.Now.DayOfYear);
+            double Lower = resist + (resist * ((intel / mastery.MaxOverallStatFromMastery) * Constants.Default.ResistanceIntelWindowEdgeMultiplier));
+            double upper = resist + (resist * ((def / mastery.MaxOverallStatFromMastery) * Constants.Default.ResistanceDefWindowEdgeMultiplier));
+            if (Lower > upper)
+                Lower = upper;
+            return rand.Next((int)Lower, (int)upper);
+        }
+
+
+        #endregion
+
+        public bool CheckDeath()
+        {
+            return myStats[Stats.statsType.CURRENT_HEALTH] <= 0;
         }
 
         #endregion
@@ -375,6 +443,15 @@ namespace ProteusCreature
             Console.WriteLine("Abilities");
             foreach (ability a in Abilities)
                 Console.WriteLine(a.ToString());
+        }
+
+        public void combatPrint()
+        {
+            Console.WriteLine("{7}: {0}-{1}-{2}-{3}-{4}-{5}/{6}", 
+                myStats[Stats.statsType.STRENGTH], myStats[Stats.statsType.DEFENCE], myStats[Stats.statsType.ENDURANCE], 
+                myStats[Stats.statsType.INTELLIGENCE], myStats[Stats.statsType.INTELLIGENCE],
+                myStats[Stats.statsType.CURRENT_HEALTH], myStats[Stats.statsType.TOTAL_HEALTH],this.Name);
+
         }
 
         #endregion

@@ -1,0 +1,36 @@
+﻿<?xml version='1.0' encoding='utf-8'?>
+<SettingsFile xmlns="http://schemas.microsoft.com/VisualStudio/2004/01/settings" CurrentProfile="(Default)" GeneratedClassNamespace="ProteusCreature" GeneratedClassName="Constants">
+  <Profiles />
+  <Settings>
+    <Setting Name="total_health_endurance_multiplier" Type="System.Double" Scope="Application">
+      <Value Profile="(Default)">0.88</Value>
+    </Setting>
+    <Setting Name="total_health_strength_multiplier" Type="System.Double" Scope="Application">
+      <Value Profile="(Default)">0.22</Value>
+    </Setting>
+    <Setting Name="total_health_final_multiplier" Type="System.Double" Scope="Application">
+      <Value Profile="(Default)">10</Value>
+    </Setting>
+    <Setting Name="MasteryPerLevelFactor" Type="System.Double" Scope="Application">
+      <Value Profile="(Default)">0.01</Value>
+    </Setting>
+    <Setting Name="MaxTotalStatPerBodyPart" Type="System.Int32" Scope="Application">
+      <Value Profile="(Default)">50</Value>
+    </Setting>
+    <Setting Name="MaxMasteryLevel" Type="System.Int32" Scope="Application">
+      <Value Profile="(Default)">100</Value>
+    </Setting>
+    <Setting Name="Damage2IntelWindowEdgeMultiplier" Type="System.Double" Scope="Application">
+      <Value Profile="(Default)">0.25</Value>
+    </Setting>
+    <Setting Name="Damage2StrWindowEdgeMulitiplier" Type="System.Double" Scope="Application">
+      <Value Profile="(Default)">1</Value>
+    </Setting>
+    <Setting Name="ResistanceIntelWindowEdgeMultiplier" Type="System.Double" Scope="Application">
+      <Value Profile="(Default)">0.25</Value>
+    </Setting>
+    <Setting Name="ResistanceDefWindowEdgeMultiplier" Type="System.Double" Scope="Application">
+      <Value Profile="(Default)">1</Value>
+    </Setting>
+  </Settings>
+</SettingsFile>

@@ -7,6 +7,8 @@ namespace ProteusCreature
 {
     public class bodypart
     {
+        /**TODO make deep copy method**/
+
         public enum ClassPartTypes
         {
             InvertebrateHead, InvertebrateBody, InvertebrateLegs, InvertebrateAccessory,
